@@ -134,14 +134,14 @@
   transition: color 0.2s ease;
 }
 .auth-link:hover {
-  color: #658fbc; 
+  color: #285567; 
 }
 
 /* Profil Alanı Stilleri */
 .profile-section { position: relative; }
 .profile-button {
   background: none; border: none; padding: 0; cursor: pointer;
-  display: flex; align-items: center; color: #658fbc; 
+  display: flex; align-items: center; color: #285567; 
   border-radius: 50%;
   transition: color 0.2s ease;
 }
@@ -218,7 +218,7 @@
 .profile-dropdown .dropdown-section-title {
   font-size: 0.75rem; 
   font-weight: bold;
-  color: #6c757d; /* Başlık için gri tonu */
+  color: #285567; /* Başlık için gri tonu */
   margin-bottom: 6px;
   text-transform: uppercase; 
   letter-spacing: 0.5px; 
@@ -262,7 +262,7 @@
 /* Sepet Alanı */
 .cart {
   position: relative; display: flex; align-items: center; cursor: pointer;
-  color: #658fbc; 
+  color: #285567; 
   transition: color 0.2s ease;
 }
 .cart:hover {

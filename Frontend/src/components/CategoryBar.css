@@ -31,15 +31,15 @@
     height: 8px; /* Kaydırma çubuğunun yüksekliği */
   }
   .category-bar-container::-webkit-scrollbar-track {
-    background: #ffe643; /* Kaydırma çubuğu yolu */
+    background: #e0e0e0; /* Kaydırma çubuğu yolu */
     border-radius: 10px;
   }
   .category-bar-container::-webkit-scrollbar-thumb {
-    background: #ffe643; /* Kaydırma çubuğu */
+    background: #285567; /* Kaydırma çubuğu */
     border-radius: 10px;
   }
   .category-bar-container::-webkit-scrollbar-thumb:hover {
-    background: #ffe643; /* Hover rengi */
+    background: #658fbc; /* Hover rengi */
   }
   
   

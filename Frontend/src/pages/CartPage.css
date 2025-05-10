@@ -199,7 +199,7 @@
 }
 .checkout-button:hover {
   background-color:  #f1ca78; /* Tema sarısı hover */
-  color: #12461f; /* Koyu yeşil yazı */
+  color: #004887; /* Koyu yeşil yazı */
   transform: scale(1.02); 
 }
 .checkout-button:disabled {
@@ -369,7 +369,7 @@
 .empty-cart-message a {
     display: inline-block;
     padding: 10px 25px;
-    background-color: #12461f; /* Tema yeşili */
+    background-color: #004887; /* Tema yeşili */
     color: #fff; 
     border-radius: 5px;
     text-decoration: none;
