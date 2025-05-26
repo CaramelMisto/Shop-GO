@@ -3,22 +3,23 @@ import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
   StyleSheet, Image, Alert,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform
+  KeyboardAvoidingView, // Zaten vardı
+  ScrollView,         // Zaten vardı
+  Platform            // Zaten vardı
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const YOUR_NEW_YELLOW_COLOR = '#ffe643';
 const CUSTOM_GREEN_COLOR = '#005800';
+const BUTTON_TEXT_COLOR_WHITE = '#FFFFFF';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => { // Bu fonksiyon aynı kalacak
+  const handleLogin = async () => {
     try {
-      const res = await fetch('http://192.168.1.11:5000/api/login', {
+      const res = await fetch('http://192.168.1.11:5000/api/login', { // IP adresinizi kontrol edin
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -44,7 +45,6 @@ export default function LoginScreen({ navigation }) {
     navigation.navigate('SignUpScreen');
   };
 
-  // YENİ: Şifremi Unuttum ekranına yönlendirme fonksiyonu
   const handleForgotPasswordNavigation = () => {
     navigation.navigate('ForgotPasswordScreen');
   };
@@ -82,7 +82,6 @@ export default function LoginScreen({ navigation }) {
             secureTextEntry
           />
 
-          {/* ŞİFREMİ UNUTTUM LİNKİ */}
           <TouchableOpacity onPress={handleForgotPasswordNavigation} style={styles.forgotPasswordContainer}>
             <Text style={styles.forgotPasswordText}>Şifremi Unuttum?</Text>
           </TouchableOpacity>
@@ -150,30 +149,26 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     paddingVertical: 12,
-    marginBottom: 10, // Şifremi unuttum linki için boşluk ayarlandı
+    marginBottom: 10,
     fontSize: 16,
     backgroundColor: '#f9f9f9'
   },
-  // YENİ STİLLER (Şifremi Unuttum için)
   forgotPasswordContainer: {
-    alignItems: 'flex-end', // Sağa yasla
-    marginBottom: 15, // Giriş yap butonu ile arasında boşluk
+    alignItems: 'flex-end',
+    marginBottom: 15,
   },
   forgotPasswordText: {
     fontSize: 14,
-    color: CUSTOM_GREEN_COLOR, // Veya başka bir link rengi
+    color: YOUR_NEW_YELLOW_COLOR,
     fontWeight: '600',
   },
   loginButton: {
-    backgroundColor: YOUR_NEW_YELLOW_COLOR,
+    backgroundColor: CUSTOM_GREEN_COLOR, // Yeşil olarak güncellenmişti
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2, },
     shadowOpacity: 0.15,
     shadowRadius: 3.84,
     elevation: 3,
@@ -181,7 +176,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     fontWeight: 'bold',
     fontSize: 16,
-    color: '#333'
+    color: BUTTON_TEXT_COLOR_WHITE, // Beyaz olarak güncellenmişti
   },
   signUpContainer: {
     flexDirection: 'row',
@@ -196,7 +191,7 @@ const styles = StyleSheet.create({
   },
   signUpLink: {
     fontSize: 14,
-    color: CUSTOM_GREEN_COLOR,
+    color: CUSTOM_GREEN_COLOR, // Yeşil olarak güncellenmişti
     fontWeight: 'bold',
   },
   separator: {

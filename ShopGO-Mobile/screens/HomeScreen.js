@@ -6,18 +6,20 @@ import {
   UIManager
 } from 'react-native';
 import { BackHandler } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native'; // useFocusEffect zaten import edilmiş
+import { useFocusEffect } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// ... (sabitler ve Android LayoutAnimation ayarı aynı) ...
 const CUSTOM_GREEN_COLOR = '#005800';
 const YOUR_YELLOW_COLOR = '#ffe643';
 const TEXT_COLOR_DARK = '#333333';
 const WHITE_COLOR = '#ffffff';
+// const DARKER_YELLOW_BORDER = '#e6cf3a'; // Opacity ile soluklaştırma yapacağımız için bu gerekmeyebilir
+
 const DEFAULT_LAT = 37.00;
 const DEFAULT_LON = 35.3213;
 const DEFAULT_ADDRESS = "Adana Merkezi (Varsayılan)";
+
 const CART_STORAGE_KEY = 'userShopGoCartItems';
 const LOCATION_STORAGE_KEY = 'selectedShopGoLocation';
 
@@ -30,8 +32,8 @@ if (Platform.OS === 'android') {
 export default function HomeScreen({ navigation, route }) {
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState([]);
-  const [loadingProducts, setLoadingProducts] = useState(true); // Ürünler için ayrı loading
-  const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false); // Genel ilk yükleme
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -39,79 +41,37 @@ export default function HomeScreen({ navigation, route }) {
   const [selectedLocationInfo, setSelectedLocationInfo] = useState(null);
   const [footerHeight, setFooterHeight] = useState(0);
 
-  // 1. Sadece bir kez çalışan: Kayıtlı konumu yükle ve ürünleri çek
   useEffect(() => {
-    const loadSavedLocation = async () => {
+    const loadInitialData = async () => {
       try {
         const savedLocationString = await AsyncStorage.getItem(LOCATION_STORAGE_KEY);
         if (savedLocationString) {
           const savedLocation = JSON.parse(savedLocationString);
-          if (savedLocation) {
+          if (savedLocation && !route.params?.selectedLocationInfo) {
             setSelectedLocationInfo(savedLocation);
           }
         }
+        const savedCartString = await AsyncStorage.getItem(CART_STORAGE_KEY);
+        if (savedCartString) {
+          const savedCart = JSON.parse(savedCartString);
+          if (Array.isArray(savedCart)) {
+            setCartItems(savedCart);
+          }
+        }
       } catch (error) {
-        console.error("HomeScreen - AsyncStorage'dan konum okunurken hata:", error);
+        console.error("HomeScreen - AsyncStorage'dan ilk veri okunurken hata:", error);
+      } finally {
+        setIsInitialDataLoaded(true);
       }
     };
-
-    const fetchProducts = () => {
-        setLoadingProducts(true);
-        fetch('http://192.168.1.11:5000/api/products')
-            .then(res => { /* ... (hata yönetimi aynı) ... */
-                if (!res.ok) { return res.json().then(err => { throw err; }); } return res.json();
-            })
-            .then(data => {
-                if (Array.isArray(data)) { setProducts(data); const uniqueCategories = [...new Set(data.map(p => p.category).filter(Boolean))]; setCategories(uniqueCategories); }
-                else { setProducts([]); setCategories([]); }
-            })
-            .catch(error => { console.error("API Hatası (HomeScreen - Ürünler):", error); Alert.alert("Hata", `Ürünler yüklenirken bir sorun oluştu.`); setProducts([]); setCategories([]); })
-            .finally(() => setLoadingProducts(false));
-    };
-
-    loadSavedLocation();
-    fetchProducts();
-    setIsInitialDataLoaded(true); // Diğer effect'lerin çalışabilmesi için
+    loadInitialData();
   }, []);
 
-  // 2. HomeScreen her odaklandığında (focus olduğunda) AsyncStorage'dan sepeti yükle
-  useFocusEffect(
-    useCallback(() => {
-      const loadCartFromStorage = async () => {
-        try {
-          const savedCartString = await AsyncStorage.getItem(CART_STORAGE_KEY);
-          if (savedCartString) {
-            const savedCart = JSON.parse(savedCartString);
-            if (Array.isArray(savedCart)) {
-              setCartItems(savedCart);
-              console.log('HomeScreen (focus) - Sepet AsyncStorage dan yüklendi:', savedCart);
-            } else {
-              setCartItems([]); // Geçersiz veri varsa boşalt
-            }
-          } else {
-            setCartItems([]); // Kayıtlı sepet yoksa boşalt
-            console.log('HomeScreen (focus) - AsyncStorage da kayıtlı sepet bulunamadı.');
-          }
-        } catch (error) {
-          console.error("HomeScreen (focus) - AsyncStorage'dan sepet okunurken hata:", error);
-          setCartItems([]); // Hata durumunda boşalt
-        }
-      };
-
-      loadCartFromStorage();
-      // Bu effect'ten bir cleanup fonksiyonu döndürmeye gerek yok,
-      // çünkü sadece focus olduğunda çalışıyor.
-    }, []) // Boş bağımlılık, her focus'ta çalışır
-  );
-
-
-  // 3. Sepet değiştiğinde AsyncStorage'a kaydet (Bu zaten vardı, isInitialDataLoaded kontrolü önemli)
   useEffect(() => {
     if (isInitialDataLoaded) {
       const saveCart = async () => {
         try {
           await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
-          console.log('HomeScreen - Sepet AsyncStorage a kaydedildi (değişiklik sonrası):', cartItems);
         } catch (error) {
           console.error("HomeScreen - Sepet AsyncStorage'a kaydedilirken hata:", error);
         }
@@ -120,31 +80,62 @@ export default function HomeScreen({ navigation, route }) {
     }
   }, [cartItems, isInitialDataLoaded]);
 
-  // 4. Header'daki sepet ikonunu güncelle (Bu aynı kalabilir)
   useEffect(() => {
     navigation.setParams({ cartItemsForHeader: cartItems });
   }, [cartItems, navigation]);
 
-  // 5. LocationPickerScreen'dan gelen YENİ konumu işle (Eskisi gibi, sadece AsyncStorage'a kaydı zaten yapılıyor)
   useEffect(() => {
+    let paramsToClear = {};
+    let hasNewParams = false;
     if (route.params?.selectedLocationInfo) {
       const newLocInfo = route.params.selectedLocationInfo;
-      // selectedLocationInfo AsyncStorage'a LocationPickerScreen'de zaten kaydediliyor.
-      // Sadece state'i güncelliyoruz ve kullanıcıyı bilgilendiriyoruz.
       if (JSON.stringify(selectedLocationInfo) !== JSON.stringify(newLocInfo)) {
-          setSelectedLocationInfo(newLocInfo);
-          Alert.alert("Konum Güncellendi", newLocInfo.address || `Enlem: ${newLocInfo.latitude.toFixed(4)}, Boylam: ${newLocInfo.longitude.toFixed(4)}`);
+        setSelectedLocationInfo(newLocInfo);
+        Alert.alert("Konum Güncellendi", newLocInfo.address || `Enlem: ${newLocInfo.latitude.toFixed(4)}, Boylam: ${newLocInfo.longitude.toFixed(4)}`);
       }
-      navigation.setParams({ selectedLocationInfo: undefined }); // Parametreyi temizle
+      paramsToClear.selectedLocationInfo = undefined;
+      hasNewParams = true;
     }
-  }, [route.params?.selectedLocationInfo, navigation, selectedLocationInfo]);
+    if (route.params?.cartUpdatedFromCartScreen && route.params.hasOwnProperty('updatedCartItems')) {
+      setCartItems(route.params.updatedCartItems);
+      paramsToClear.cartUpdatedFromCartScreen = undefined;
+      paramsToClear.updatedCartItems = undefined;
+      paramsToClear.timestamp = undefined;
+      hasNewParams = true;
+    }
+    if (hasNewParams) {
+      navigation.setParams(paramsToClear);
+    }
+  }, [route.params?.selectedLocationInfo, route.params?.timestamp, navigation, selectedLocationInfo]);
 
+  useEffect(() => {
+    setLoadingProducts(true);
+    fetch('http://192.168.1.11:5000/api/products') // IP adresinizi kontrol edin
+      .then(res => {
+        if (!res.ok) { return res.json().then(err => { throw err; }); } return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) { setProducts(data); const uniqueCategories = [...new Set(data.map(p => p.category).filter(Boolean))]; setCategories(uniqueCategories); }
+        else { setProducts([]); setCategories([]); }
+      })
+      .catch(error => { console.error("API Hatası (HomeScreen - Ürünler):", error); Alert.alert("Hata", `Ürünler yüklenirken bir sorun oluştu.`); setProducts([]); setCategories([]); })
+      .finally(() => setLoadingProducts(false));
+  }, []);
 
-  // useFocusEffect (BackHandler için) ve diğer tüm render/handler fonksiyonları aynı kalacak
-  // ... (handleIncreaseQuantity, handleDecreaseQuantity, renderCategoryItem, renderProductCard, vs.)
-  // ... (return JSX kısmı ve stiller aynı kalacak)
   useFocusEffect(
     useCallback(() => {
+      const loadCartFromStorageOnFocus = async () => {
+        try {
+          const savedCartString = await AsyncStorage.getItem(CART_STORAGE_KEY);
+          if (savedCartString) {
+            const savedCart = JSON.parse(savedCartString);
+            if (Array.isArray(savedCart)) { setCartItems(savedCart); }
+            else { setCartItems([]);}
+          } else { setCartItems([]); }
+        } catch (error) { console.error("HomeScreen (focus) - AsyncStorage'dan sepet okunurken hata:", error); setCartItems([]);}
+      };
+      loadCartFromStorageOnFocus();
+
       const onBackPress = () => {
         Alert.alert('Çıkmak istiyor musun?', 'Uygulamadan çıkmak üzeresin.',
           [{ text: 'İptal', style: 'cancel' }, { text: 'Çık', onPress: () => BackHandler.exitApp() }]
@@ -254,25 +245,14 @@ export default function HomeScreen({ navigation, route }) {
         <FlatList data={searchedProducts} keyExtractor={(item) => item.id.toString()} numColumns={2} renderItem={renderProductCard} columnWrapperStyle={styles.row}
           contentContainerStyle={{ paddingBottom: cartItems.length > 0 ? (footerHeight > 0 ? footerHeight + 10 : 90) : 20 }}/>
       ) : (
-        <Text style={styles.noProductsText}>
-          {searchQuery && filteredByCategory.length > 0 ? `"${searchQuery}" için ürün bulunamadı.` : selectedCategory ? `"${selectedCategory}" kategorisinde ürün bulunamadı.` : "Uygun ürün bulunamadı."}
-        </Text>
+         !loadingProducts && <Text style={styles.noProductsText}>{searchQuery ? `"${searchQuery}" için ürün bulunamadı.` : selectedCategory ? `"${selectedCategory}" kategorisinde ürün bulunamadı.` : "Uygun ürün bulunamadı."}</Text>
       )}
       {cartItems.length > 0 && (
-        <View
-          style={styles.footer}
-          onLayout={(event) => { // Bu onLayout kısmı footer yüksekliğini ayarlamak için kalabilir
+        <View style={styles.footer} onLayout={(event) => {
             const { height } = event.nativeEvent.layout;
-            if (height > 0 && height !== footerHeight) {
-                setFooterHeight(height);
-            }
-          }}
-        >
-          <TouchableOpacity
-            style={styles.footerActionButton}
-            onPress={() => navigation.navigate('Cart', { cartItems: cartItems })}
-          >
-            
+            if (height > 0 && height !== footerHeight) { setFooterHeight(height); }
+          }}>
+          <TouchableOpacity style={styles.footerActionButton} onPress={() => navigation.navigate('Cart', { cartItems: cartItems })}>
             <Text style={styles.footerActionButtonText}>Sepete Git</Text>
           </TouchableOpacity>
         </View>
@@ -281,7 +261,6 @@ export default function HomeScreen({ navigation, route }) {
   );
 }
 
-// Stiller... (bir öncekiyle aynı)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8f9fa'},
   loadingIndicatorFullPage: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8f9fa' },
@@ -293,11 +272,41 @@ const styles = StyleSheet.create({
   locationChipIcon: { marginHorizontal: 4 },
   locationChipText: { fontSize: 14, fontWeight: '600', color: CUSTOM_GREEN_COLOR, textAlign: 'center', marginHorizontal: 8, flex: 1 },
   categoryContainer: { paddingVertical: 10, paddingHorizontal: 15, backgroundColor: WHITE_COLOR, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  categoryButton: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#e9ecef', marginRight: 10, borderWidth: 1, borderColor: '#dee2e6' },
-  categoryButtonSelected: { backgroundColor: CUSTOM_GREEN_COLOR, borderColor: CUSTOM_GREEN_COLOR },
-  categoryButtonText: { fontSize: 14, color: '#495057' },
-  categoryButtonTextSelected: { color: WHITE_COLOR, fontWeight: 'bold' },
-  // loadingIndicator: { flex: 1, justifyContent: 'center', alignItems: 'center' }, // loadingIndicatorFullPage kullanılıyor
+  categoryButton: { // NORMAL (PASİF / SARI VE SOLUK) KATEGORİ BUTONU
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: YOUR_YELLOW_COLOR,      // <<<--- ARKA PLAN SARI
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: YOUR_YELLOW_COLOR,          // <<<--- Kenarlık da sarı
+    opacity: 0.75,                           // <<<--- BUTONU SOLUKLAŞTIRMAK İÇİN OPACITY
+  },
+  categoryButtonSelected: { // SEÇİLİ (AKTİF / YEŞİL VE BELİRGİN) KATEGORİ BUTONU
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: CUSTOM_GREEN_COLOR,     // ARKA PLAN YEŞİL
+    borderColor: CUSTOM_GREEN_COLOR,         // Kenarlık yeşil
+    borderWidth: 1.5,                        // Aktifken kenarlık biraz daha kalın
+    marginRight: 10,
+    opacity: 1,                              // Tamamen opak
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  categoryButtonText: { // NORMAL (PASİF / SARI VE SOLUK) KATEGORİ BUTON YAZISI
+    fontSize: 14,
+    fontWeight: '600',                       // Yazı okunaklı kalsın
+    color: TEXT_COLOR_DARK,                  // <<<--- SARI ÜZERİNE KOYU RENK YAZI (opacity ile bu da soluklaşacak)
+  },
+  categoryButtonTextSelected: { // SEÇİLİ (AKTİF / YEŞİL VE BELİRGİN) KATEGORİ BUTON YAZISI
+    color: WHITE_COLOR,                      // YEŞİL ÜZERİNE BEYAZ YAZI
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
   noProductsText: { textAlign: 'center', marginTop: 30, paddingHorizontal:20, fontSize: 16, color: '#6c757d' },
   row: { justifyContent: "space-around", paddingHorizontal: 10 },
   productCard: { flex: 1, maxWidth: '48%', backgroundColor: WHITE_COLOR, borderRadius: 8, padding: 12, marginBottom: 15, alignItems: 'center', shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 3.84, elevation: 5 },
