@@ -50,14 +50,16 @@ Shop-GO, kullanıcıların alışveriş listelerine göre en uygun fiyatlı ve e
     * [ ] Çoklu dil desteği (isteğe bağlı).
 
 ## 📷 Demo Fotoğraflar
-![anasayfa](https://github.com/user-attachments/assets/6b81125e-e6df-45ee-9212-f9e970dafd21)
-![kayıtol (1)](https://github.com/user-attachments/assets/c02e0eff-6781-45ec-b70a-b851b477e95d)
-![ürünler](https://github.com/user-attachments/assets/8aa58ce4-4bd4-44cf-9711-c29ea9e09787)
-![profil](https://github.com/user-attachments/assets/a9d8aaa2-fd66-44bc-b57c-820fcc325327)
-![sepet](https://github.com/user-attachments/assets/0ba66ede-010c-4263-ac2a-8a33bd876822)
-![ekleme](https://github.com/user-attachments/assets/430cb88b-83f9-4ebd-be70-7b4341919335)
-![market](https://github.com/user-attachments/assets/c6589637-2953-43c4-921f-cf4e06fad2d4)
-
+![giriş](https://github.com/user-attachments/assets/a86a4b42-f360-41dc-aaef-4e69703c9a7d)
+![şifre unuttum](https://github.com/user-attachments/assets/79c6db49-cd9d-4b9e-a005-0fdfac33bc34)
+![kayıtol](https://github.com/user-attachments/assets/b3cfed1d-e473-4d25-b421-dc1d157ed7d6)
+![ürünler](https://github.com/user-attachments/assets/4b8e531e-18d2-425b-a0ac-4ff0b06a4347)
+![hesap,](https://github.com/user-attachments/assets/d19a0f21-c583-4ed0-af58-048d38eed863)
+![konum](https://github.com/user-attachments/assets/c9058cab-9c3d-4ae0-b4d0-cb16af49f388)
+![boş sepet](https://github.com/user-attachments/assets/f42d79d5-8465-4643-9b0e-89d633d2d6fd)
+![sepet](https://github.com/user-attachments/assets/93339035-fa1c-4038-a31e-b034bbca64bf)
+![yol tarifi](https://github.com/user-attachments/assets/1564e33a-7cc1-4490-8410-d8b6aed073f2)
+![yol](https://github.com/user-attachments/assets/4c79a8fc-40c8-4b83-8147-dc19487ab3f8)
 
 
 
