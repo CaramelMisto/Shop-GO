@@ -19,7 +19,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch('http://192.168.1.11:5000/api/login', { // IP adresinizi kontrol edin
+      const res = await fetch('http://192.168.1.15:5000/api/login', { // IP adresinizi kontrol edin
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     fontSize: 14,
-    color: YOUR_NEW_YELLOW_COLOR,
+    color: CUSTOM_GREEN_COLOR, // Yeşil olarak güncellenmişti
     fontWeight: '600',
   },
   loginButton: {

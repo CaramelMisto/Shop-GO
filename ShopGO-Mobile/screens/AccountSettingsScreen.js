@@ -88,7 +88,7 @@ export default function AccountSettingsScreen({ route, navigation }) {
         navigation.navigate('Login');
         return;
       }
-      const response = await fetch('http://192.168.1.11:5000/api/profile', { // KENDİ IP ADRESİNİZİ KULLANIN
+      const response = await fetch('http://192.168.1.15:5000/api/profile', { // KENDİ IP ADRESİNİZİ KULLANIN
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload),

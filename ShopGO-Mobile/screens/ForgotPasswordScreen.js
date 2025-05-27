@@ -25,7 +25,7 @@ export default function ForgotPasswordScreen({ navigation }) {
     }
     setLoading(true);
     try {
-      const res = await fetch('http://192.168.1.11:5000/api/forgot-password', { // Kendi IP adresinizi kontrol edin
+      const res = await fetch('http://192.168.1.15:5000/api/forgot-password', { // Kendi IP adresinizi kontrol edin
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

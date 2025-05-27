@@ -33,7 +33,7 @@ export default function CompareScreen({ route }) {
         }
 
         // API isteği için kullanıcının konumunu kullan
-        const response = await fetch('http://192.168.1.11:5000/api/calculate-list-prices', {
+        const response = await fetch('http://192.168.1.15:5000/api/calculate-list-prices', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

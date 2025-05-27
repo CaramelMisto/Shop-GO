@@ -34,7 +34,7 @@ export default function ProfileScreen({ navigation }) {
         const userString = await AsyncStorage.getItem(USER_STORAGE_KEY);
         if (userString) fetchedUserData = JSON.parse(userString);
       } else {
-        const response = await fetch('http://192.168.1.11:5000/api/profile', { // KENDİ IP ADRESİNİZİ KULLANIN
+        const response = await fetch('http://192.168.1.15:5000/api/profile', { // KENDİ IP ADRESİNİZİ KULLANIN
           method: 'GET',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         });

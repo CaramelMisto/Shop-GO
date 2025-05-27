@@ -33,7 +33,7 @@ export default function SignUpScreen({ navigation }) {
     }
     try {
       // API_ENDPOINT'teki boşluk kaldırıldı ve IP adresi korundu.
-      const API_ENDPOINT = 'http://192.168.1.11:5000/api/register';
+      const API_ENDPOINT = 'http://192.168.1.15:5000/api/register';
       const response = await fetch(API_ENDPOINT, {
         method: 'POST',
         headers: {

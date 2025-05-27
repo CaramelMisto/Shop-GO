@@ -110,7 +110,7 @@ export default function HomeScreen({ navigation, route }) {
 
   useEffect(() => {
     setLoadingProducts(true);
-    fetch('http://192.168.1.11:5000/api/products') // IP adresinizi kontrol edin
+    fetch('http://192.168.1.15:5000/api/products') // IP adresinizi kontrol edin
       .then(res => {
         if (!res.ok) { return res.json().then(err => { throw err; }); } return res.json();
       })
