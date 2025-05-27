@@ -14,7 +14,6 @@ const CUSTOM_GREEN_COLOR = '#005800';
 const YOUR_YELLOW_COLOR = '#ffe643';
 const TEXT_COLOR_DARK = '#333333';
 const WHITE_COLOR = '#ffffff';
-// const DARKER_YELLOW_BORDER = '#e6cf3a'; // Opacity ile soluklaştırma yapacağımız için bu gerekmeyebilir
 
 const DEFAULT_LAT = 37.00;
 const DEFAULT_LON = 35.3213;
@@ -34,7 +33,6 @@ export default function HomeScreen({ navigation, route }) {
   const [cartItems, setCartItems] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
-
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -110,7 +108,7 @@ export default function HomeScreen({ navigation, route }) {
 
   useEffect(() => {
     setLoadingProducts(true);
-    fetch('http://192.168.1.15:5000/api/products') // IP adresinizi kontrol edin
+    fetch('http://192.168.1.15:5000/api/products')
       .then(res => {
         if (!res.ok) { return res.json().then(err => { throw err; }); } return res.json();
       })
@@ -272,38 +270,38 @@ const styles = StyleSheet.create({
   locationChipIcon: { marginHorizontal: 4 },
   locationChipText: { fontSize: 14, fontWeight: '600', color: CUSTOM_GREEN_COLOR, textAlign: 'center', marginHorizontal: 8, flex: 1 },
   categoryContainer: { paddingVertical: 10, paddingHorizontal: 15, backgroundColor: WHITE_COLOR, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  categoryButton: { // NORMAL (PASİF / SARI VE SOLUK) KATEGORİ BUTONU
+  categoryButton: {
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: YOUR_YELLOW_COLOR,      // <<<--- ARKA PLAN SARI
+    backgroundColor: YOUR_YELLOW_COLOR,
     marginRight: 10,
     borderWidth: 1,
-    borderColor: YOUR_YELLOW_COLOR,          // <<<--- Kenarlık da sarı
-    opacity: 0.75,                           // <<<--- BUTONU SOLUKLAŞTIRMAK İÇİN OPACITY
+    borderColor: YOUR_YELLOW_COLOR,
+    opacity: 0.75,
   },
-  categoryButtonSelected: { // SEÇİLİ (AKTİF / YEŞİL VE BELİRGİN) KATEGORİ BUTONU
+  categoryButtonSelected: {
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: CUSTOM_GREEN_COLOR,     // ARKA PLAN YEŞİL
-    borderColor: CUSTOM_GREEN_COLOR,         // Kenarlık yeşil
-    borderWidth: 1.5,                        // Aktifken kenarlık biraz daha kalın
+    backgroundColor: CUSTOM_GREEN_COLOR,
+    borderColor: CUSTOM_GREEN_COLOR,
+    borderWidth: 1.5,
     marginRight: 10,
-    opacity: 1,                              // Tamamen opak
+    opacity: 1,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
   },
-  categoryButtonText: { // NORMAL (PASİF / SARI VE SOLUK) KATEGORİ BUTON YAZISI
+  categoryButtonText: {
     fontSize: 14,
-    fontWeight: '600',                       // Yazı okunaklı kalsın
-    color: TEXT_COLOR_DARK,                  // <<<--- SARI ÜZERİNE KOYU RENK YAZI (opacity ile bu da soluklaşacak)
+    fontWeight: '600',
+    color: TEXT_COLOR_DARK,
   },
-  categoryButtonTextSelected: { // SEÇİLİ (AKTİF / YEŞİL VE BELİRGİN) KATEGORİ BUTON YAZISI
-    color: WHITE_COLOR,                      // YEŞİL ÜZERİNE BEYAZ YAZI
+  categoryButtonTextSelected: {
+    color: WHITE_COLOR,
     fontWeight: 'bold',
     fontSize: 14,
   },
@@ -320,6 +318,6 @@ const styles = StyleSheet.create({
   adjustButtonText: { color: WHITE_COLOR, fontSize: 20, fontWeight: 'bold', lineHeight: Platform.OS === 'ios' ? 22 : 24 },
   quantityDisplay: { fontSize: 16, fontWeight: 'bold', color: TEXT_COLOR_DARK, minWidth: 30, textAlign: 'center' },
   footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 15, backgroundColor: WHITE_COLOR, borderTopWidth: 1, borderTopColor: '#eee' },
-  footerActionButton: { backgroundColor: CUSTOM_GREEN_COLOR, paddingVertical: 15, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
-  footerActionButtonText: { color: WHITE_COLOR, fontSize: 16, fontWeight: 'bold' }
+  footerActionButton: { backgroundColor: CUSTOM_GREEN_COLOR, paddingVertical: 15, borderRadius: 8, alignItems: 'center' },
+  footerActionButtonText: { color: WHITE_COLOR, fontWeight: 'bold', fontSize: 16 },
 });

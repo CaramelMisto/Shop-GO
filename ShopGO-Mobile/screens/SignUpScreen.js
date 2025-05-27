@@ -1,4 +1,3 @@
-// screens/SignUpScreen.js
 import React, { useState } from 'react';
 import {
   View,
@@ -9,8 +8,8 @@ import {
   Alert,
   ScrollView,
   Image,
-  KeyboardAvoidingView, // Eklendi
-  Platform            // Eklendi
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 
 const YOUR_APP_COLOR = '#ffe643';
@@ -32,7 +31,6 @@ export default function SignUpScreen({ navigation }) {
       return;
     }
     try {
-      // API_ENDPOINT'teki boşluk kaldırıldı ve IP adresi korundu.
       const API_ENDPOINT = 'http://192.168.1.15:5000/api/register';
       const response = await fetch(API_ENDPOINT, {
         method: 'POST',
@@ -67,15 +65,14 @@ export default function SignUpScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={styles.keyboardAvoidingContainer} // En dış sarmalayıcı
+      style={styles.keyboardAvoidingContainer}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
-        contentContainerStyle={styles.scrollContentContainer} // ScrollView içeriği için stil
-        keyboardShouldPersistTaps="handled" // Klavye açıkken tıklamaları yönetir
-        showsVerticalScrollIndicator={false} // Kaydırma çubuğunu gizler
+        contentContainerStyle={styles.scrollContentContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        {/* Form elemanlarını içeren ana View */}
         <View style={styles.formInnerContainer}>
           <Text style={styles.title}>Hesap Oluştur</Text>
 
@@ -133,24 +130,18 @@ export default function SignUpScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  // KeyboardAvoidingView için stil
   keyboardAvoidingContainer: {
     flex: 1,
-    backgroundColor: '#fff', // Ekranın ana arka plan rengi
+    backgroundColor: '#fff',
   },
-  // ScrollView'in contentContainerStyle'ı için
   scrollContentContainer: {
-    flexGrow: 1, // İçeriğin ScrollView'in tüm alanını kullanmasını sağlar (özellikle içerik kısaysa)
-    justifyContent: 'center', // İçeriği dikeyde ortalar (içerik ekrandan kısaysa)
-    paddingVertical: 20, // Üst ve altta genel bir boşluk
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingVertical: 20,
   },
-  // Form elemanlarını içeren iç View için stil (eski styles.container'ın bazı özellikleri)
   formInnerContainer: {
-    alignItems: 'center', // İçeriği yatayda ortalar
-    paddingHorizontal: 30, // Yanlardan boşluk
-    // backgroundColor: '#fff', // keyboardAvoidingContainer'dan geliyor
-    // flex: 1, // scrollContentContainer'daki flexGrow:1 ile bu gereksiz
-    // justifyContent: 'center', // scrollContentContainer'daki justifyContent ile bu gereksiz
+    alignItems: 'center',
+    paddingHorizontal: 30,
   },
   title: {
     fontSize: 26,
@@ -160,7 +151,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   input: {
-    width: '100%', // formInnerContainer'ın padding'ine göre ayarlanır
+    width: '100%',
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,

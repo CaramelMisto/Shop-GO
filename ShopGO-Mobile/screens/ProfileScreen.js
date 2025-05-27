@@ -1,4 +1,3 @@
-// screens/ProfileScreen.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Platform, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,9 +19,7 @@ export default function ProfileScreen({ navigation }) {
   const [displayAddress, setDisplayAddress] = useState('Yükleniyor...');
   const [loadingData, setLoadingData] = useState(true);
 
-  // Bu fetchData fonksiyonu async ve useCallback ile sarmalanmış haliyle kalacak
   const fetchData = useCallback(async () => {
-    console.log("ProfileScreen: fetchData çağrıldı."); // Kontrol için log
     setLoadingData(true);
     let fetchedUserData = null;
     let fetchedAddress = 'Henüz bir adres seçilmedi';
@@ -30,11 +27,10 @@ export default function ProfileScreen({ navigation }) {
     try {
       const token = await AsyncStorage.getItem(TOKEN_STORAGE_KEY);
       if (!token) {
-        console.log("ProfileScreen: Token bulunamadı.");
         const userString = await AsyncStorage.getItem(USER_STORAGE_KEY);
         if (userString) fetchedUserData = JSON.parse(userString);
       } else {
-        const response = await fetch('http://192.168.1.15:5000/api/profile', { // KENDİ IP ADRESİNİZİ KULLANIN
+        const response = await fetch('http://192.168.1.15:5000/api/profile', {
           method: 'GET',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         });
@@ -48,23 +44,21 @@ export default function ProfileScreen({ navigation }) {
           fetchedUserData = updatedUserDataForState;
           await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUserDataForState));
         } else {
-          console.error("ProfileScreen: API'dan profil verisi çekilemedi, status:", response.status);
           if (response.status === 401 || response.status === 422) {
             Alert.alert("Oturum Hatası", "Oturumunuz geçersiz. Lütfen tekrar giriş yapın.");
             await AsyncStorage.clear();
             navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
-            setLoadingData(false); return; // Fonksiyondan erken çık
+            setLoadingData(false); return;
           }
           const userString = await AsyncStorage.getItem(USER_STORAGE_KEY);
           if (userString) fetchedUserData = JSON.parse(userString);
         }
       }
     } catch (e) {
-      console.error("ProfileScreen: API'dan profil verisi çekilirken hata:", e);
       try {
         const userString = await AsyncStorage.getItem(USER_STORAGE_KEY);
         if (userString) fetchedUserData = JSON.parse(userString);
-      } catch (asyncError) { console.error("ProfileScreen: Fallback AsyncStorage okuma hatası:", asyncError); }
+      } catch (asyncError) {}
       if (!fetchedUserData) Alert.alert("Hata", "Profil bilgileri yüklenirken bir sorun oluştu.");
     }
     setUserData(fetchedUserData);
@@ -76,32 +70,17 @@ export default function ProfileScreen({ navigation }) {
         fetchedAddress = savedLocation.address || 'Adres ayarlanmamış';
       }
     } catch (e) {
-      console.error("ProfileScreen: AsyncStorage'dan adres okunurken hata:", e);
       fetchedAddress = 'Adres yüklenemedi';
     }
     setDisplayAddress(fetchedAddress);
     setLoadingData(false);
-  }, [navigation]); // navigation bağımlılığı burada kalabilir (reset için)
+  }, [navigation]);
 
-  // useFocusEffect'in doğru kullanımı
   useFocusEffect(
     useCallback(() => {
-      // fetchData fonksiyonunu burada çağırıyoruz.
       fetchData();
-
-      // İsteğe bağlı: Bir cleanup fonksiyonu döndürebilirsiniz.
-      // Bu fonksiyon, ekran odaktan çıktığında çalışır.
-      // return () => {
-      //   console.log("ProfileScreen odaktan çıktı.");
-      // };
-    }, [fetchData]) // fetchData fonksiyonu useCallback ile sarmalandığı için,
-                   // fetchData'nın kendisi bağımlılık dizisine eklenebilir.
-                   // Bu, fetchData'nın referansı değişirse (ki navigation değişirse değişir)
-                   // useFocusEffect'in callback'inin yeniden oluşturulmasını sağlar.
+    }, [fetchData])
   );
-
-  // ... (handleLogout ve MenuItem component'i aynı kalacak)
-  // ... (return JSX kısmı ve stiller aynı kalacak, bir önceki mesajdaki gibi)
 
   const handleLogout = () => {
     Alert.alert(
@@ -117,7 +96,6 @@ export default function ProfileScreen({ navigation }) {
               Alert.alert('Başarılı!', 'Başarıyla çıkış yaptınız.');
               navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
             } catch (e) {
-              console.error("Çıkış yapılırken AsyncStorage temizleme hatası:", e);
               Alert.alert("Hata", "Çıkış yapılırken bir sorun oluştu.");
             }
           },
@@ -180,7 +158,6 @@ export default function ProfileScreen({ navigation }) {
   );
 }
 
-// Stiller aynı kalacak (bir önceki mesajdaki gibi)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f0f2f5' },
   scrollContentContainer: { paddingBottom: 30 },

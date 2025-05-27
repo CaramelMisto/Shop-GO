@@ -1,19 +1,16 @@
-// screens/CartScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CommonActions } from '@react-navigation/native'; // CommonActions import edildi
-import Ionicons from 'react-native-vector-icons/Ionicons'; // İkonlar için
+import { CommonActions } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const CUSTOM_GREEN_COLOR = '#005800';
 const CART_STORAGE_KEY = 'userShopGoCartItems';
 const WHITE_COLOR = '#ffffff';
-const TEXT_COLOR_DARK = '#333333'; // Kullanılmıyorsa kaldırılabilir
+const TEXT_COLOR_DARK = '#333333';
 
 export default function CartScreen({ route, navigation }) {
   const [currentCartItems, setCurrentCartItems] = useState([]);
-  // cartModified state'ine ve beforeRemove listener'ına bu yaklaşımda ihtiyacımız kalmıyor,
-  // çünkü HomeScreen her odaklandığında AsyncStorage'dan son sepeti çekecek.
 
   useEffect(() => {
     const initialItems = (route.params?.cartItems || []).map(item => ({
@@ -27,7 +24,6 @@ export default function CartScreen({ route, navigation }) {
     const saveCartToStorage = async () => {
       try {
         if (currentCartItems) {
-          console.log('CartScreen - Sepet AsyncStoragea kaydediliyor:', currentCartItems);
           await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(currentCartItems));
         }
       } catch (error) {
@@ -36,7 +32,6 @@ export default function CartScreen({ route, navigation }) {
     };
     saveCartToStorage();
   }, [currentCartItems]);
-
 
   const handleIncreaseQuantity = (itemId) => {
     setCurrentCartItems(prevItems =>
@@ -100,27 +95,23 @@ export default function CartScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Header başlığı App.js'ten ayarlanacak */}
-      {/* <Text style={styles.title}>Alışveriş Listem</Text> */}
       {currentCartItems.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="basket-outline" size={80} color="#cccccc" style={styles.emptyCartIcon} />
           <Text style={styles.emptyCartText}>Sepetiniz şu anda boş.</Text>
           <TouchableOpacity
-            style={styles.startShoppingButton} // <-- YENİ BUTON STİLİ
+            style={styles.startShoppingButton}
             onPress={() => {
-              // Navigasyon yığınını sıfırla ve sadece Home ekranını bırak
               navigation.dispatch(
                 CommonActions.reset({
                   index: 0,
                   routes: [
-                    { name: 'Home' }, // Yığında sadece Home ekranı olacak
+                    { name: 'Home' },
                   ],
                 })
               );
             }}
           >
-            {/* YENİ BUTON METİN STİLİ */}
             <Text style={styles.startShoppingButtonText}>Alışverişe Başla</Text>
           </TouchableOpacity>
         </View>
@@ -129,16 +120,9 @@ export default function CartScreen({ route, navigation }) {
           data={currentCartItems}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderCartItem}
-          // contentContainerStyle={{ paddingBottom: currentCartItems.length > 0 ? 80 : 20 }}
-          // Footer'ı FlatList'in dışına aldığımız için bu padding'e dikkat edelim.
-          // Eğer footer FlatList'in bir parçası değilse (ki değil), bu padding
-          // listenin son elemanlarının footer'ın arkasında kalmamasını sağlar.
-          // Ancak footer zaten absolute position değilse, FlatList kendi alanında kayacaktır.
-          // Şimdilik basit bir padding bırakalım.
           contentContainerStyle={{ paddingBottom: 20 }}
         />
       )}
-      {/* "Market Fiyatlarını Göster" butonu sadece sepette ürün varsa görünür */}
       {currentCartItems.length > 0 && (
         <View style={styles.footer}>
           <TouchableOpacity
@@ -159,21 +143,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
-    // paddingHorizontal: 15, // FlatList ve emptyContainer kendi padding'lerini yönetebilir
-    // paddingTop: 20, // Header zaten var
   },
-  title: { // Bu stil artık kullanılmıyor, header başlığı App.js'ten geliyor
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: TEXT_COLOR_DARK, // TEXT_COLOR_DARK olarak güncellendi
+    color: TEXT_COLOR_DARK,
     textAlign: 'center',
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20, // İçeriğin kenarlara yapışmaması için
+    paddingHorizontal: 20,
   },
   emptyCartIcon: {
     marginBottom: 20,
@@ -186,7 +168,7 @@ const styles = StyleSheet.create({
   },
   startShoppingButton: {
     backgroundColor: CUSTOM_GREEN_COLOR,
-    paddingVertical: 14, // Biraz daha dolgun buton
+    paddingVertical: 14,
     paddingHorizontal: 40,
     borderRadius: 8,
     alignItems: 'center',
@@ -206,14 +188,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: WHITE_COLOR,
     padding: 15,
-    marginHorizontal:15, // Kartların kenarlara yapışmaması için
+    marginHorizontal:15,
     marginBottom: 15,
     borderRadius: 8,
     alignItems: 'center',
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08, // Daha hafif gölge
-    shadowRadius: 3,     // Daha yumuşak gölge
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
     elevation: 2,
   },
   itemImage: {
@@ -225,13 +207,13 @@ const styles = StyleSheet.create({
   },
   itemDetails: {
     flex: 1,
-    justifyContent: 'center', // Dikeyde ortalamak için
+    justifyContent: 'center',
   },
   itemName: {
     fontSize: 16,
     fontWeight: '600',
-    color: TEXT_COLOR_DARK, // TEXT_COLOR_DARK olarak güncellendi
-    marginBottom: 8, // Miktar kontrolü ile arasında boşluk
+    color: TEXT_COLOR_DARK,
+    marginBottom: 8,
   },
   quantityControls: {
     flexDirection: 'row',
@@ -254,19 +236,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginHorizontal: 15,
-    color: TEXT_COLOR_DARK, // TEXT_COLOR_DARK olarak güncellendi
+    color: TEXT_COLOR_DARK,
   },
   deleteButton: {
-    padding: 10, // Tıklama alanını artır
+    padding: 10,
     marginLeft: 10,
   },
-  // deleteButtonText emojisi kullanıldığı için bu stile gerek yok, ikon kullanırsanız lazım olur.
-  // deleteButtonText: { fontSize: 22, color: '#dc3545' },
   footer: {
-    padding: 15, // Footer'ın kendi iç boşluğu
+    padding: 15,
     borderTopWidth: 1,
     borderTopColor: '#eee',
-    backgroundColor: WHITE_COLOR, // Arka planı beyaz yapabiliriz
+    backgroundColor: WHITE_COLOR,
   },
   compareButton: {
     backgroundColor: CUSTOM_GREEN_COLOR,
